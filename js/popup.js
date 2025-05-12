@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const inputDiv = document.createElement("div");
     inputDiv.classList.add("history-input");
-    inputDiv.textContent = `> ${expression}`;
+    inputDiv.textContent = `> ${String(expression)}`;
 
     const outputDiv = document.createElement("div");
     outputDiv.classList.add("history-output");
-    outputDiv.textContent = resultText;
+    outputDiv.textContent = String(resultText);
     if (typeof resultText === "string" && resultText.startsWith("Error:")) {
       outputDiv.classList.add("error");
     }
@@ -30,8 +30,32 @@ document.addEventListener("DOMContentLoaded", () => {
     historyContainer.appendChild(entryDiv);
 
     // Scroll to the bottom of the history
-    historyContainer.scrollTop = historyContainer.scrollHeight;
+    if (historyContainer) {
+      historyContainer.scrollTop = historyContainer.scrollHeight;
+    }
   }
+
+  // --- Load and display existing history ---
+  async function loadAndDisplayHistory() {
+    if (typeof self.getHistory === "function" && historyContainer) {
+      try {
+        const history = await self.getHistory();
+        historyContainer.innerHTML = ""; // Clear any static content
+        history.forEach((entry) => {
+          addEntryToHistoryDisplay(entry.expression, entry.result);
+        });
+        // Scroll to bottom after loading
+        historyContainer.scrollTop = historyContainer.scrollHeight;
+      } catch (error) {
+        console.error("Error loading history:", error);
+      }
+    } else {
+      console.warn("getHistory function or history container not available.");
+    }
+  }
+  // Load history when the popup is loaded
+  loadAndDisplayHistory();
+  // --- End Load History ---
 
   // Handle expression input on Enter key
   if (expressionInput) {
@@ -46,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Handle "clear" command
         if (expression.toLowerCase() === "clear") {
           historyContainer.innerHTML = "";
+          if (typeof self.clearHistory === "function") {
+            await self.clearHistory(); // Clear stored history
+          }
           expressionInput.value = "";
           expressionInput.focus();
           return;
@@ -75,9 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Clear button functionality
   if (clearButton) {
-    clearButton.addEventListener("click", (event) => {
+    clearButton.addEventListener("click", async (event) => {
       event.preventDefault();
-      historyContainer.innerHTML = "";
+      if (historyContainer) {
+        historyContainer.innerHTML = "";
+      }
+      if (typeof self.clearHistory === "function") {
+        await self.clearHistory(); // Clear stored history
+      }
       if (expressionInput) {
         expressionInput.value = "";
         expressionInput.focus();
