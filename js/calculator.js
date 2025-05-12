@@ -158,6 +158,9 @@ async function processCalculatorInput(inputString) {
   if (typeof inputString !== "string") return "Error: Invalid input type";
   inputString = inputString.trim();
 
+  // Remove commas from the input string
+  inputString = inputString.replace(/,/g, "");
+
   // GS command can stay
   if (inputString.toLowerCase().startsWith("gs ")) {
     // ... (existing GS logic) ...
