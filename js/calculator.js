@@ -156,15 +156,49 @@ async function evaluateWithFcal(originalExpression, expressionToEvaluate) {
  */
 async function processCalculatorInput(inputString) {
   if (typeof inputString !== "string") return "Error: Invalid input type";
+  const originalInput = inputString; // Keep original for history
   inputString = inputString.trim();
 
   // Remove commas from the input string
   inputString = inputString.replace(/,/g, "");
 
+  // --- Chained Calculation Logic ---
+  const leadingOperatorRegex = /^[+\-*/%^]/;
+  if (leadingOperatorRegex.test(inputString)) {
+    if (typeof self.getVariable === "function") {
+      try {
+        const ansValue = await self.getVariable("ans");
+        // Check if ansValue exists and is not null/undefined. Fcal might handle various types.
+        if (ansValue !== undefined && ansValue !== null) {
+          console.log(
+            `Prepending 'ans' value (${ansValue}) to input: ${inputString}`
+          );
+          // Prepend the answer. Ensure space for clarity if ansValue doesn't end with operator
+          // Fcal might handle "4+3" or "4 + 3". Let's add a space for robustness.
+          inputString = String(ansValue) + " " + inputString;
+        } else {
+          // Optional: Could return an error or just proceed without prepending
+          console.warn(
+            "Input starts with operator, but 'ans' is not set. Evaluating as is."
+          );
+        }
+      } catch (error) {
+        console.error("Error retrieving 'ans' for chained calculation:", error);
+        // Decide how to handle error: return error or proceed?
+        // Proceeding might be less disruptive.
+      }
+    } else {
+      console.warn(
+        "getVariable function not available for chained calculation."
+      );
+    }
+  }
+  // --- End Chained Calculation Logic ---
+
   // GS command can stay
-  if (inputString.toLowerCase().startsWith("gs ")) {
-    // ... (existing GS logic) ...
-    const searchQuery = inputString.substring(3).trim();
+  if (originalInput.trim().toLowerCase().startsWith("gs ")) {
+    // Check original input for GS command
+    const searchQuery = originalInput.substring(3).trim();
     if (!searchQuery) {
       return "Error: No search query provided for Google Search.";
     }
@@ -178,7 +212,7 @@ async function processCalculatorInput(inputString) {
       if (response && response.status === "success") {
         if (typeof self.addHistoryEntry === "function") {
           await self.addHistoryEntry({
-            expression: inputString,
+            expression: originalInput,
             result: response.data,
           });
         }
@@ -200,15 +234,17 @@ async function processCalculatorInput(inputString) {
   // For all other inputs, treat as an expression for Fcal to evaluate.
   // We might still want to preprocess with our variables if they are simple numeric subs.
   // Or, better, find a way to pass our variable context to fcal if desired.
-  console.log(`Fcal evaluation for: ${inputString}`);
+  console.log(
+    `Fcal evaluation for: ${inputString} (Original: ${originalInput})`
+  );
 
-  // Preprocessing with our custom variable store. Fcal will then evaluate this.
-  // This means variables must be resolvable to values that fcal understands in an expression.
+  // Preprocessing with our custom variable store. Fcal will then evaluate this potentially modified string.
   const expressionForFcal = await preprocessExpressionWithVariables(
     inputString
   );
 
-  const result = await evaluateWithFcal(inputString, expressionForFcal);
+  // Evaluate using the potentially modified inputString, but log the originalInput
+  const result = await evaluateWithFcal(originalInput, expressionForFcal);
 
   // Storing 'ans' - fcal might handle 'ans' internally or we might need to set it.
   // If fcal evaluation result is a number (or can be parsed to one), set it to 'ans' in our store.
