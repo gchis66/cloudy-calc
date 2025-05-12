@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudy Calc</title>
+    <link rel="stylesheet" href="css/calc.css" />
+  </head>
+  <body>
+    <div id="calculator-ui">
+      <header id="title-bar">
+        <span id="calculator-title">Cloudy Calculator</span>
+        <nav id="header-nav">
+          <a href="#" id="clear-button">Clear</a> |
+          <a href="#" id="options-button">Options</a>
+          <a href="#" id="popout-button-icon" title="Pop-out Calculator">
+            <!-- Placeholder for an icon, e.g., SVG or font icon -->
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path
+                d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+              />
+            </svg>
+          </a>
+        </nav>
+      </header>
+
+      <div id="history-container">
+        <!-- History entries will be dynamically added here by JS -->
+        <!-- Example:
+        <div class="history-entry">
+          <div class="history-input">@Everest = height of Everest</div>
+          <div class="history-output">29035 feet</div>
+        </div>
+        -->
+      </div>
+
+      <div id="input-container">
+        <span id="input-prompt">&gt;</span>
+        <input type="text" id="expression-input" autofocus autocomplete="off" />
+        <!-- Removed placeholder and calculate button -->
+      </div>
+    </div>
+
+    <script src="js/lib/fcal.min.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/theme-loader.js"></script>
+    <script src="js/utils/messaging.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/variables.js"></script>
+    <script src="js/units.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/popup.js"></script>
+  </body>
+</html>

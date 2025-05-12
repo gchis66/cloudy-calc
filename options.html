@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudy Calc Options</title>
+    <link rel="stylesheet" href="css/options.css" />
+  </head>
+  <body>
+    <h1>Cloudy Calc Settings</h1>
+
+    <section>
+      <h2>Appearance</h2>
+      <div>
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <br />
+      <div>
+        <label for="font-size-input">Base Font Size (e.g., 14px, 1rem):</label>
+        <input type="text" id="font-size-input" placeholder="16px" />
+      </div>
+    </section>
+
+    <br />
+    <button id="save-options-button">Save Options</button>
+    <p id="status-message"></p>
+
+    <script src="js/utils/storage.js"></script>
+    <!-- js/utils/messaging.js might be needed if options page communicates with service worker -->
+    <script src="js/options.js"></script>
+  </body>
+</html>
