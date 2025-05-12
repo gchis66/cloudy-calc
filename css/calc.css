@@ -101,8 +101,15 @@ body {
   margin-bottom: 8px;
 }
 
-.history-input {
-  /* Optional: style differently, e.g., add a '>' or specific color */
+.history-input,
+.history-output:not(.error) {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.history-input:hover,
+.history-output:not(.error):hover {
+  background-color: var(--hover-bg-color);
 }
 
 .history-output {

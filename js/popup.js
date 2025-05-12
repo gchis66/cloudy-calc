@@ -16,14 +16,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const inputDiv = document.createElement("div");
     inputDiv.classList.add("history-input");
-    inputDiv.textContent = `> ${String(expression)}`;
+    const expressionString = String(expression);
+    inputDiv.textContent = `> ${expressionString}`;
 
     const outputDiv = document.createElement("div");
     outputDiv.classList.add("history-output");
-    outputDiv.textContent = String(resultText);
-    if (typeof resultText === "string" && resultText.startsWith("Error:")) {
+    const resultString = String(resultText);
+    outputDiv.textContent = resultString;
+    const isError = resultString.startsWith("Error:");
+    if (isError) {
       outputDiv.classList.add("error");
     }
+
+    // --- Add Click Listeners ---
+    if (expressionInput) {
+      inputDiv.addEventListener("click", () => {
+        expressionInput.value = expressionString; // Use original expression
+        expressionInput.focus();
+        // Optional: Select the text after inserting
+        expressionInput.select();
+      });
+
+      // Only make output clickable if it wasn't an error
+      if (!isError) {
+        outputDiv.addEventListener("click", () => {
+          expressionInput.value = resultString; // Use result string
+          expressionInput.focus();
+          // Optional: Select the text after inserting
+          expressionInput.select();
+        });
+      }
+    }
+    // --- End Click Listeners ---
 
     entryDiv.appendChild(inputDiv);
     entryDiv.appendChild(outputDiv);
