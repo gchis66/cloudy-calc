@@ -1,17 +1,19 @@
 # Cloudy Calculator
 
-A powerful Chrome extension calculator with advanced mathematical functions and features.
+A powerful Chrome extension calculator with advanced mathematical functions and features for quick calculations directly in your browser.
 
 ## Features
 
-- Basic arithmetic operations (addition, subtraction, multiplication, division)
-- Advanced math functions through the fcal library
-- Mathematical constants (PI)
-- Variable assignment and usage
-- Unit conversion capabilities
-- Factorial calculations
-- Command history
-- Google search integration
+- **Basic Arithmetic**: Addition, subtraction, multiplication, division
+- **Advanced Math Functions**: Powered by the fcal library for complex expressions
+- **Mathematical Constants**: Support for PI (case-insensitive)
+- **Variables**: Store and reuse values with custom variable assignment
+- **Chained Calculations**: Continue calculations with previous answers
+- **Factorial Calculations**: Calculate factorials with both n! and factorial(n) notation
+- **Command History**: View and recall previous calculations
+- **Google Search Integration**: Search calculation-related information directly
+- **Customizable Appearance**: Choose between light and dark themes
+- **Pop-out Calculator**: Use the calculator in a separate window
 
 ## Usage
 
@@ -25,6 +27,16 @@ Enter any mathematical expression in the input field and press Enter to calculat
 (25 - 5) / 4
 ```
 
+### Chained Calculations
+
+Continue calculations using the previous result by starting with an operator:
+
+```
+2 + 3     (result: 5)
+* 4       (calculates 5 * 4 = 20)
+- 10      (calculates 20 - 10 = 10)
+```
+
 ### Variables
 
 Assign values to variables using the `@` syntax:
@@ -35,15 +47,23 @@ Assign values to variables using the `@` syntax:
 @result = x + y
 ```
 
-Use variables in any expression:
+Use variables in subsequent expressions:
 
 ```
 @x * 2
+@result / 4
+```
+
+The calculator automatically stores the most recent result as `ans`, which you can use in calculations:
+
+```
+2 + 2     (result: 4)
+@x = ans * 2     (sets x to 8)
 ```
 
 ### Mathematical Constants
 
-The calculator includes the PI constant (case-insensitive):
+Use PI in calculations (case-insensitive):
 
 ```
 PI
@@ -51,11 +71,9 @@ PI
 Pi*r^2
 ```
 
-To learn more about mathematical constants, type `help pi` or press F2 while using the calculator.
-
 ### Factorial Calculations
 
-The calculator supports factorial calculations in two ways:
+Calculate factorials in two ways:
 
 1. Using the `!` notation:
 
@@ -75,8 +93,6 @@ Factorials can be used within more complex expressions:
 7! / 6!
 ```
 
-To learn more about factorials, type `help factorial` or press F1 while using the calculator.
-
 ### Commands
 
 - `clear` - Clear the calculation history
@@ -84,21 +100,27 @@ To learn more about factorials, type `help factorial` or press F1 while using th
 - `help pi` or `help constants` - Display help about mathematical constants
 - `gs [query]` - Search Google for calculator-related information
 
-## Testing
+### Customization
 
-You can test the factorial functionality using the included test page:
+Access settings by clicking the "Options" link in the calculator:
 
-- Open `test-factorial.html` in your browser
-- Use the manual testing interface to try different expressions
-- View the automatic test results to verify functionality
+- **Theme**: Choose between Light and Dark themes
+- **Font Size**: Adjust the calculator's font size for better readability
 
 ## Installation
 
-1. Clone this repository
+1. Clone this repository or download the source code
 2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode"
+3. Enable "Developer mode" (toggle in the top-right corner)
 4. Click "Load unpacked" and select the project folder
 5. The Cloudy Calculator extension will be added to your browser
+
+## Usage Tips
+
+- Press Enter to calculate expressions
+- Click the pop-out icon to use the calculator in a separate window
+- Use the up/down arrow keys to navigate through command history
+- Right-click on results to copy them to the clipboard
 
 ## Technologies
 
