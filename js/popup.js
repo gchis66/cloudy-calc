@@ -81,9 +81,163 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAndDisplayHistory();
   // --- End Load History ---
 
+  // Function to display help information about factorial functionality
+  function showFactorialHelp() {
+    const helpInfo = [
+      "Factorial Help",
+      "",
+      "In mathematics, the factorial of a non-negative integer n is the product of all positive integers less than or equal to n.",
+      "",
+      "Factorial Notation: n!",
+      "Example: 5! = 5 × 4 × 3 × 2 × 1 = 120",
+      "",
+      "You can use factorials in two ways:",
+      "1. Using the ! notation: 5!",
+      "2. Using the factorial function: factorial(5)",
+      "",
+      "Examples:",
+      "5! → 120",
+      "factorial(6) → 720",
+      "2 * 3! → 12",
+      "7! / 6! → 7",
+      "",
+      "Note: Factorials grow very quickly. The calculator supports factorials up to the limit of JavaScript's number precision.",
+    ];
+
+    historyContainer.innerHTML = ""; // Clear current history
+
+    // Display each line of the help text
+    helpInfo.forEach((line) => {
+      const entryDiv = document.createElement("div");
+      entryDiv.classList.add("history-entry");
+
+      const helpLine = document.createElement("div");
+      helpLine.classList.add("history-output");
+      helpLine.style.color = "#4285f4"; // Google blue color
+      helpLine.textContent = line;
+
+      entryDiv.appendChild(helpLine);
+      historyContainer.appendChild(entryDiv);
+    });
+
+    // Add a "Back to History" button
+    const backDiv = document.createElement("div");
+    backDiv.classList.add("history-entry");
+
+    const backButton = document.createElement("button");
+    backButton.textContent = "Return to History";
+    backButton.style.margin = "10px 0";
+    backButton.style.padding = "5px 10px";
+    backButton.addEventListener("click", loadAndDisplayHistory);
+
+    backDiv.appendChild(backButton);
+    historyContainer.appendChild(backDiv);
+
+    // Scroll to top of help
+    historyContainer.scrollTop = 0;
+  }
+
+  // Function to display help information about mathematical constants
+  function showConstantsHelp() {
+    const helpInfo = [
+      "Mathematical Constants Help",
+      "",
+      "This calculator supports the following mathematical constants:",
+      "",
+      "π (Pi) - The ratio of a circle's circumference to its diameter",
+      "Value: 3.14159265358979",
+      "",
+      "Usage:",
+      "• You can use PI in any expression (case-insensitive)",
+      "• Examples:",
+      "  PI → 3.14159265358979",
+      "  2*pi → 6.28318530717959",
+      "  Pi/2 → 1.5707963267949",
+      "",
+      "Applications:",
+      "• Circle area: pi*r^2",
+      "• Circle circumference: 2*pi*r",
+      "• Sine wave period: 2*pi",
+      "",
+      "Note: The pi constant is case-insensitive, so you can use 'PI', 'pi', 'Pi', or 'pI'.",
+    ];
+
+    historyContainer.innerHTML = ""; // Clear current history
+
+    // Display each line of the help text
+    helpInfo.forEach((line) => {
+      const entryDiv = document.createElement("div");
+      entryDiv.classList.add("history-entry");
+
+      const helpLine = document.createElement("div");
+      helpLine.classList.add("history-output");
+      helpLine.style.color = "#4285f4"; // Google blue color
+      helpLine.textContent = line;
+
+      entryDiv.appendChild(helpLine);
+      historyContainer.appendChild(entryDiv);
+    });
+
+    // Add a "Back to History" button
+    const backDiv = document.createElement("div");
+    backDiv.classList.add("history-entry");
+
+    const backButton = document.createElement("button");
+    backButton.textContent = "Return to History";
+    backButton.style.margin = "10px 0";
+    backButton.style.padding = "5px 10px";
+    backButton.addEventListener("click", loadAndDisplayHistory);
+
+    backDiv.appendChild(backButton);
+    historyContainer.appendChild(backDiv);
+
+    // Scroll to top of help
+    historyContainer.scrollTop = 0;
+  }
+
   // Handle expression input on Enter key
   if (expressionInput) {
     expressionInput.addEventListener("keydown", async (event) => {
+      // Show factorial help when F1 is pressed
+      if (event.key === "F1") {
+        event.preventDefault();
+        showFactorialHelp();
+        return;
+      }
+
+      // Show constants help when F2 is pressed
+      if (event.key === "F2") {
+        event.preventDefault();
+        showConstantsHelp();
+        return;
+      }
+
+      // Show factorial help when typing "help factorial" or "factorial help"
+      if (
+        event.key === "Enter" &&
+        (expressionInput.value.trim().toLowerCase() === "help factorial" ||
+          expressionInput.value.trim().toLowerCase() === "factorial help")
+      ) {
+        event.preventDefault();
+        showFactorialHelp();
+        expressionInput.value = "";
+        return;
+      }
+
+      // Show constants help when typing "help pi", "help constants", etc.
+      if (
+        event.key === "Enter" &&
+        (expressionInput.value.trim().toLowerCase() === "help pi" ||
+          expressionInput.value.trim().toLowerCase() === "help constants" ||
+          expressionInput.value.trim().toLowerCase() === "pi help" ||
+          expressionInput.value.trim().toLowerCase() === "constants help")
+      ) {
+        event.preventDefault();
+        showConstantsHelp();
+        expressionInput.value = "";
+        return;
+      }
+
       if (event.key === "Enter") {
         event.preventDefault(); // Prevent default form submission if any
         const expression = expressionInput.value.trim();

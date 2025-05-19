@@ -1,5 +1,34 @@
 // js/calculator.js - Core Calculator Logic
 
+// Add factorial function implementation
+/**
+ * Calculates factorial for a given number
+ * @param {number} n - The number to calculate factorial for
+ * @returns {number} - The factorial result
+ */
+function calculateFactorial(n) {
+  // Validate input - must be non-negative integer
+  if (n < 0 || !Number.isInteger(n)) {
+    throw new Error("Factorial requires a non-negative integer");
+  }
+
+  // Base case: 0! = 1
+  if (n === 0) return 1;
+
+  // Use iterative approach to avoid stack overflow with large numbers
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+
+    // Check for overflow - factorial grows very quickly
+    if (!isFinite(result)) {
+      throw new Error("Factorial result too large to calculate");
+    }
+  }
+
+  return result;
+}
+
 // Initialize Fcal instance
 // Ensure Fcal is loaded globally from fcal.min.js before this script
 console.log("Checking fcal global before instantiation:", typeof fcal, fcal);
@@ -67,20 +96,20 @@ async function preprocessExpressionWithVariables(expression) {
   }
   try {
     const variables = await self.getAllVariables();
-    // TODO: Decide how these variables should interact with fcal.
-    // Option 1: Fcal uses its own variable store (e.g. 'x : 10').
-    // Option 2: Inject these variables into fcal for current evaluation: fcalInstance.setValues(variables);
-    // For now, this preprocessing might create expressions fcal can directly use if variables are numbers.
     let processedExpression = expression;
+    // Sort variable names by length descending to handle longer names first (e.g., var1 before var)
     const varNames = Object.keys(variables).sort((a, b) => b.length - a.length);
+
     for (const varName of varNames) {
-      const regex = new RegExp(
-        `(?<![a-zA-Z0-9])${varName}(?![a-zA-Z0-9])`,
-        "g"
-      );
+      // Regex to find varName (e.g., "x", "ans", "my_var") as a whole word.
+      // \b creates a word boundary.
+      const variableRegex = new RegExp(`\\b${varName}\\b`, "g");
+
+      // variables[varName] is now guaranteed to be a number or string from storage.
+      const valueToSubstitute = String(variables[varName]);
       processedExpression = processedExpression.replace(
-        regex,
-        variables[varName]
+        variableRegex,
+        valueToSubstitute
       );
     }
     return processedExpression;
@@ -88,6 +117,54 @@ async function preprocessExpressionWithVariables(expression) {
     console.error("Error preprocessing variables:", error);
     return expression;
   }
+}
+
+/**
+ * Preprocesses an expression string to handle factorial notation
+ * @param {string} expression - The expression to preprocess
+ * @returns {string} - The processed expression with factorials calculated
+ */
+function preprocessFactorials(expression) {
+  if (typeof expression !== "string") return expression;
+
+  // Regular expression to find factorial notation (number followed by !)
+  // This handles basic factorial expressions like 5! or 10!
+  const factorialRegex = /(\d+)!/g;
+
+  // Replace all factorial notations with their calculated values
+  let processedExpression = expression.replace(
+    factorialRegex,
+    (match, number) => {
+      try {
+        const n = parseInt(number, 10);
+        const factorialValue = calculateFactorial(n);
+        return factorialValue.toString();
+      } catch (error) {
+        console.error(`Error calculating factorial for ${number}:`, error);
+        // Keep the original notation if calculation fails
+        // This will be caught later in the evaluation process
+        return match;
+      }
+    }
+  );
+
+  return processedExpression;
+}
+
+/**
+ * Preprocesses an expression string to handle case-insensitive mathematical constants
+ * @param {string} expression - The expression to preprocess
+ * @returns {string} - The processed expression with standardized constant names
+ */
+function preprocessConstants(expression) {
+  if (typeof expression !== "string") return expression;
+
+  // Convert all case variations of pi to the standard uppercase PI that fcal recognizes
+  // Use word boundaries to avoid replacing "pi" in words like "recipe"
+  const piRegex = /\b([pP][iI])\b/g;
+  let processedExpression = expression.replace(piRegex, "PI");
+
+  return processedExpression;
 }
 
 /**
@@ -101,6 +178,13 @@ async function evaluateWithFcal(originalExpression, expressionToEvaluate) {
     return "Error: Fcal library not loaded.";
   }
   try {
+    // Preprocess constants to handle case-insensitive variations
+    expressionToEvaluate = preprocessConstants(expressionToEvaluate);
+
+    // First check if the expression contains factorial notation
+    // and preprocess it before sending to fcal
+    expressionToEvaluate = preprocessFactorials(expressionToEvaluate);
+
     // If we want to use variables from our own store with fcal:
     if (typeof self.getAllVariables === "function") {
       const customVariables = await self.getAllVariables();
@@ -159,7 +243,147 @@ async function processCalculatorInput(inputString) {
   const originalInput = inputString; // Keep original for history
   inputString = inputString.trim();
 
-  // Remove commas from the input string
+  // Handle direct factorial function call - factorial(n)
+  const factorialFunctionRegex = /^factorial\((\d+)\)$/i;
+  const factorialMatch = inputString.match(factorialFunctionRegex);
+
+  if (factorialMatch) {
+    const number = parseInt(factorialMatch[1], 10);
+    try {
+      const result = calculateFactorial(number);
+
+      // Add to history
+      if (typeof self.addHistoryEntry === "function") {
+        await self.addHistoryEntry({
+          expression: originalInput,
+          result: result.toString(),
+        });
+      }
+
+      // Store as 'ans'
+      if (typeof self.setVariable === "function") {
+        await self.setVariable("ans", result);
+      }
+
+      return result.toString();
+    } catch (error) {
+      return `Error: ${error.message}`;
+    }
+  }
+
+  // Regex for variable assignment: @var_name = value
+  const assignmentRegex = /^@([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$/;
+  const assignmentMatch = inputString.match(assignmentRegex);
+
+  if (assignmentMatch) {
+    const varName = assignmentMatch[1];
+    const valueExpression = assignmentMatch[2];
+
+    // Validate the variable name using the regex from variables.js
+    // Assumes VALID_VARIABLE_NAME_REGEX is available globally or via self.
+    if (
+      self.VALID_VARIABLE_NAME_REGEX &&
+      !self.VALID_VARIABLE_NAME_REGEX.test(varName)
+    ) {
+      return `Error: Invalid variable name '${varName}'. Must start with a letter or underscore and contain only alphanumeric characters or underscores.`;
+    }
+
+    try {
+      // Evaluate the value expression before setting the variable.
+      let processedValueExpression = await preprocessExpressionWithVariables(
+        valueExpression
+      );
+
+      // Handle case-insensitive PI in variable assignments
+      processedValueExpression = preprocessConstants(processedValueExpression);
+
+      // Process factorials in the value expression
+      processedValueExpression = preprocessFactorials(processedValueExpression);
+
+      let calculatedValue;
+      if (fcalInstance) {
+        calculatedValue = fcalInstance.evaluate(processedValueExpression);
+      } else {
+        return "Error: Fcal library not loaded, cannot calculate variable value.";
+      }
+
+      let valueToStore;
+      if (
+        typeof calculatedValue === "number" ||
+        typeof calculatedValue === "string"
+      ) {
+        // If fcal returns a number or a string, use it directly.
+        valueToStore = calculatedValue;
+      } else if (
+        calculatedValue !== null &&
+        typeof calculatedValue.toString === "function"
+      ) {
+        // For other types (like fcal objects), use their toString() representation.
+        // This relies on fcal objects having a toString() method that produces
+        // a string that fcal can understand if used in a future expression.
+        valueToStore = calculatedValue.toString();
+      } else {
+        // Fallback for unexpected types (e.g., null or objects without toString)
+        console.warn(
+          "Unexpected type from fcal for variable assignment:",
+          calculatedValue
+        );
+        valueToStore = String(calculatedValue); // Best effort
+      }
+
+      // If valueToStore is now a string that represents a plain number (e.g., "123", "123.45"),
+      // convert it to a number type for type consistency. Avoids storing "10" instead of 10.
+      if (typeof valueToStore === "string") {
+        const num = Number(valueToStore);
+        // Check if it's a finite number and if the string conversion is lossless (String(num) === valueToStore)
+        if (isFinite(num) && String(num) === valueToStore) {
+          valueToStore = num;
+        }
+      }
+
+      if (valueToStore === undefined) {
+        // self.setVariable also checks for undefined, but good to catch earlier.
+        return `Error setting variable '${varName}': The value expression resulted in undefined.`;
+      }
+
+      if (typeof self.setVariable === "function") {
+        const success = await self.setVariable(varName, valueToStore);
+        if (!success) {
+          // setVariable might return false if validation fails (e.g. name check, though we also check here)
+          // or if storage fails. The console.error is in setVariable itself.
+          return `Error: Could not store variable '${varName}'. Check console for details.`;
+        }
+        // Add to history
+        if (typeof self.addHistoryEntry === "function") {
+          await self.addHistoryEntry({
+            expression: originalInput,
+            result: `Variable '${varName}' set to ${valueToStore}`,
+          });
+        }
+        return `Variable '${varName}' set to ${valueToStore}`;
+      } else {
+        return "Error: Variable storage function (setVariable) not available.";
+      }
+    } catch (e) {
+      console.error(`Error processing assignment for '${varName}':`, e);
+      // Attempt to provide a more specific error from fcal if it's an FcalError
+      if (
+        (typeof FcalError !== "undefined" &&
+          e instanceof FcalError &&
+          typeof e.info === "function") ||
+        (e.name === "FcalError" && typeof e.info === "function")
+      ) {
+        return `Error in value for '${varName}': ${e.info().err} (at: ${
+          e.info().token
+        })`;
+      }
+      return `Error setting variable '${varName}': ${
+        e.message || "Calculation failed"
+      }`;
+    }
+  }
+
+  // Remove commas from the input string (moved down after assignment check)
   inputString = inputString.replace(/,/g, "");
 
   // --- Chained Calculation Logic ---
@@ -260,6 +484,9 @@ async function processCalculatorInput(inputString) {
 }
 
 self.processCalculatorInput = processCalculatorInput;
+
+// Make factorial function available globally for potential direct access from UI
+self.calculateFactorial = calculateFactorial;
 
 // Example usage (would be called from UI code):
 // async function handleUserInput(text) {

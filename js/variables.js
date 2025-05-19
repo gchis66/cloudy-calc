@@ -1,7 +1,7 @@
 // js/variables.js - Variable Management System
 
 const VARIABLE_STORAGE_KEY = "calculatorVariables";
-const VALID_VARIABLE_NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9]*$/;
+const VALID_VARIABLE_NAME_REGEX = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 /**
  * Sets a variable's value. Validates variable name.
@@ -12,7 +12,7 @@ const VALID_VARIABLE_NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9]*$/;
 async function setVariable(name, value) {
   if (!VALID_VARIABLE_NAME_REGEX.test(name)) {
     console.error(
-      `Invalid variable name: ${name}. Must start with a letter and contain only alphanumeric characters.`
+      `Invalid variable name: ${name}. Must start with a letter or underscore and contain only alphanumeric characters or underscores.`
     );
     return false;
   }
