@@ -14,7 +14,7 @@
     "default_title": "Cloudy Calc",
     "default_popup": "popup.html"
   },
-  "permissions": ["storage", "scripting"],
+  "permissions": ["storage"],
   "host_permissions": ["https://*.google.com/"],
   "background": {
     "service_worker": "js/background.js"
