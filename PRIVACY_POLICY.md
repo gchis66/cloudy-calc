@@ -33,6 +33,6 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 ## Contact
 
-If you have questions or concerns about this Privacy Policy or our data practices, please contact us at [your-email@example.com].
+If you have questions or concerns about this Privacy Policy or our data practices, please contact us at gchis66@gmail.com .
 
-Last updated: [Current Date]
+Last updated: 5/20/2025
