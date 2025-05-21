@@ -419,36 +419,7 @@ async function processCalculatorInput(inputString) {
   }
   // --- End Chained Calculation Logic ---
 
-  // GS command can stay
-  if (originalInput.trim().toLowerCase().startsWith("gs ")) {
-    // Check original input for GS command
-    const searchQuery = originalInput.substring(3).trim();
-    if (!searchQuery) {
-      return "Error: No search query provided for Google Search.";
-    }
-    if (typeof self.sendMessage !== "function") {
-      return "Error: Messaging function (sendMessage) not available.";
-    }
-    try {
-      const response = await self.sendMessage("GOOGLE_SEARCH_CALCULATE", {
-        query: searchQuery,
-      });
-      if (response && response.status === "success") {
-        if (typeof self.addHistoryEntry === "function") {
-          await self.addHistoryEntry({
-            expression: originalInput,
-            result: response.data,
-          });
-        }
-        return response.data;
-      } else {
-        const errorMsg = (response && response.data) || "Google Search failed.";
-        return `Error: ${errorMsg}`;
-      }
-    } catch (error) {
-      return "Error: Failed to communicate with service worker for Google Search.";
-    }
-  }
+  // GS command removed as Google search functionality is no longer supported
 
   // Custom unit conversion logic is removed - fcal handles units.
   // Custom assignment logic (varName = expr) is removed for now.

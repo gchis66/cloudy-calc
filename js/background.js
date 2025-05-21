@@ -1,5 +1,5 @@
 // Service worker
-importScripts("utils/network.js"); // For googleCalculatorSearch
+// importScripts("utils/network.js"); // For googleCalculatorSearch, now removed
 // importScripts('utils/storage.js'); // If background needs direct storage access beyond messages
 // importScripts('utils/messaging.js'); // If background needs to send messages proactively
 
@@ -14,28 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Message received in service worker:", message);
 
-  if (message.type === "GOOGLE_SEARCH_CALCULATE") {
-    if (typeof googleCalculatorSearch === "function") {
-      googleCalculatorSearch(message.data.query)
-        .then((result) => {
-          sendResponse({ status: "success", data: result });
-        })
-        .catch((error) => {
-          console.error("Error during Google search in service worker:", error);
-          sendResponse({
-            status: "error",
-            data: "Google Search failed in service worker",
-          });
-        });
-      return true; // Indicates asynchronous response
-    } else {
-      console.error(
-        "googleCalculatorSearch function not available in service worker."
-      );
-      sendResponse({ status: "error", data: "Search utility not loaded" });
-      return false;
-    }
-  }
+  // GOOGLE_SEARCH_CALCULATE handler removed as feature is no longer needed
 
   // Example: Process messages based on type
   // if (message.type === "DO_SOMETHING") {
