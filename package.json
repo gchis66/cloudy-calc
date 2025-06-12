@@ -1,0 +1,61 @@
+{
+  "name": "cloudy-calc",
+  "version": "1.0.0",
+  "description": "A powerful Chrome extension calculator with advanced features",
+  "main": "js/calculator.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "lint": "eslint js/**/*.js tests/**/*.js",
+    "lint:fix": "eslint js/**/*.js tests/**/*.js --fix"
+  },
+  "keywords": [
+    "calculator",
+    "chrome-extension",
+    "math",
+    "fcal"
+  ],
+  "author": "Cloudy Calc Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chrome": "^0.0.246",
+    "eslint": "^8.57.0",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/lib/**",
+      "!js/**/*.min.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov", "html"],
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js"
+    ],
+    "verbose": true
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "jest": true,
+      "webextensions": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "globals": {
+      "self": "writable",
+      "fcal": "readonly",
+      "FcalError": "readonly"
+    }
+  }
+} 

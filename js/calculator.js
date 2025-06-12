@@ -392,14 +392,25 @@ async function processCalculatorInput(inputString) {
     if (typeof self.getVariable === "function") {
       try {
         const ansValue = await self.getVariable("ans");
-        // Check if ansValue exists and is not null/undefined. Fcal might handle various types.
+        // Check if ansValue exists and is not null/undefined
         if (ansValue !== undefined && ansValue !== null) {
           console.log(
             `Prepending 'ans' value (${ansValue}) to input: ${inputString}`
           );
-          // Prepend the answer. Ensure space for clarity if ansValue doesn't end with operator
-          // Fcal might handle "4+3" or "4 + 3". Let's add a space for robustness.
-          inputString = String(ansValue) + " " + inputString;
+          
+          // Convert ansValue to string
+          let ansString = String(ansValue);
+          
+          // If the answer is negative, wrap it in parentheses to ensure proper parsing
+          // This prevents issues like "-9^2" being parsed as "-(9^2)" instead of "(-9)^2"
+          if (parseFloat(ansValue) < 0) {
+            ansString = `(${ansString})`;
+          }
+          
+          // Prepend the answer with a space for clarity
+          inputString = ansString + " " + inputString;
+          
+          console.log(`Final expression after prepending: ${inputString}`);
         } else {
           // Optional: Could return an error or just proceed without prepending
           console.warn(
