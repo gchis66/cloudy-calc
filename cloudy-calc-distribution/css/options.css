@@ -1,0 +1,65 @@
+/*
+  Styles for Cloudy Calc Options (options.html)
+  Modern CSS practices will be used.
+*/
+
+:root {
+  --global-font-size: 16px; /* Default, will be overridden by JS */
+
+  /* Light Theme (default) */
+  --bg-color: #f0f0f0;
+  --text-color: #333;
+  --input-bg-color: #fff;
+  --input-border-color: #ccc;
+  --button-bg-color: #007bff;
+  --button-text-color: #fff;
+}
+
+body.theme-dark {
+  --bg-color: #333;
+  --text-color: #f0f0f0;
+  --input-bg-color: #444;
+  --input-border-color: #666;
+  --button-bg-color: #0056b3; /* Darker blue for dark theme */
+}
+
+/* Apply variables */
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: var(--global-font-size);
+}
+
+h1,
+h2 {
+  color: var(--text-color);
+}
+
+input[type="text"],
+select {
+  padding: 8px;
+  border: 1px solid var(--input-border-color);
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#status-message {
+  margin-top: 10px;
+  font-weight: bold;
+}

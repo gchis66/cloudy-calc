@@ -1,0 +1,158 @@
+/*
+  Styles for Cloudy Calc (calc.html and popup.html)
+  Modern CSS practices will be used.
+  - Variables for theming
+  - Flexbox/Grid for layout
+  - Responsive design considerations
+*/
+
+:root {
+  --global-font-size: 16px; /* Default, should be loaded from storage by JS */
+
+  /* Light Theme (default) - values adjusted for console look */
+  --calc-bg-color: #f0f4f8; /* Light grayish-blue background */
+  --calc-text-color: #333333;
+  --calc-header-bg: #e1e8f0;
+  --calc-history-bg: #ffffff; /* White for history area */
+  --calc-history-text: #2c3e50;
+  --calc-input-bg: #fdf0d5; /* Light yellowish for input bar */
+  --calc-input-text: #333333;
+  --calc-prompt-color: #007bff; /* Blue for prompt */
+  --calc-link-color: #007bff;
+  --calc-link-hover-color: #0056b3;
+  --calc-border-color: #cdd3d9;
+}
+
+body.theme-dark {
+  /* Dark Theme - to be reviewed if dark theme is implemented for this UI */
+  --calc-bg-color: #2c3e50; /* Dark blue-gray background */
+  --calc-text-color: #ecf0f1;
+  --calc-header-bg: #34495e;
+  --calc-history-bg: #1e2a36;
+  --calc-history-text: #ecf0f1;
+  --calc-input-bg: #3b4c5d; /* Darker input bar */
+  --calc-input-text: #ecf0f1;
+  --calc-prompt-color: #5dade2; /* Lighter blue for prompt */
+  --calc-link-color: #5dade2;
+  --calc-link-hover-color: #85c1e9;
+  --calc-border-color: #4a6572;
+}
+
+body {
+  font-family: "SF Mono", "Consolas", "Menlo", "Courier New", monospace;
+  margin: 0;
+  background-color: var(--calc-bg-color);
+  color: var(--calc-text-color);
+  font-size: var(--global-font-size);
+  display: flex;
+  flex-direction: column;
+  height: 400px; /* Adjusted height back to 400px */
+  width: 380px; /* Typical extension popup width */
+  overflow: hidden; /* Prevent body scroll, handle scrolling in history-container */
+}
+
+#calculator-ui {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+}
+
+#title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--calc-header-bg);
+  border-bottom: 1px solid var(--calc-border-color);
+  flex-shrink: 0;
+}
+
+#calculator-title {
+  font-weight: bold;
+}
+
+#header-nav a {
+  text-decoration: none;
+  color: var(--calc-link-color);
+  margin-left: 8px;
+}
+
+#header-nav a:hover {
+  color: var(--calc-link-hover-color);
+  text-decoration: underline;
+}
+
+#header-nav svg {
+  vertical-align: middle;
+}
+
+#history-container {
+  flex: 1 1 0; /* Allow grow, shrink, and set basis to 0 */
+  min-height: 50px; /* Ensure it has some minimum visible height */
+  padding: 8px 12px;
+  background-color: var(--calc-history-bg);
+  color: var(--calc-history-text);
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+.history-entry {
+  margin-bottom: 8px;
+}
+
+.history-input,
+.history-output:not(.error) {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.history-input:hover,
+.history-output:not(.error):hover {
+  background-color: var(--hover-bg-color);
+}
+
+.history-output {
+  padding-left: 1em; /* Indent output slightly */
+  color: var(--calc-text-color); /* Can be different if needed */
+  /* Optional: specific styling for errors vs results */
+}
+
+.history-output.error {
+  color: #e74c3c; /* Red for errors */
+}
+
+#input-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--calc-input-bg);
+  border-top: 1px solid var(--calc-border-color);
+  flex-shrink: 0;
+}
+
+#input-prompt {
+  margin-right: 8px;
+  color: var(--calc-prompt-color);
+  font-weight: bold;
+}
+
+#expression-input {
+  flex-grow: 1;
+  background-color: transparent; /* Input bg is from container */
+  color: var(--calc-input-text);
+  border: none;
+  outline: none;
+  padding: 4px 0; /* Minimal padding */
+  font-family: inherit; /* Inherit monospace font */
+  font-size: inherit;
+}
+
+/* Remove old styles if they are no longer used by popup.html */
+/* Example of styles that might be deprecated if not used in calc.html either:
+#popup-content, #calculator-main {}
+#popup-expression-input {}
+#popup-calculate-button {}
+#popout-button {}
+#popup-result-display {}
+*/

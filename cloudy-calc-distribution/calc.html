@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudy Calculator</title>
+    <link rel="stylesheet" href="css/calc.css" />
+  </head>
+  <body>
+    <div id="calculator-ui">
+      <header id="title-bar">
+        <span id="calculator-title">Cloudy Calc</span>
+        <nav id="header-nav">
+          <a href="#" id="clear-button">Clear</a> |
+          <a href="#" id="options-button">Options</a>
+        </nav>
+      </header>
+
+      <div id="history-container">
+        <!-- History entries will be dynamically added here by JS -->
+        <!-- Example:
+        <div class="history-entry">
+          <div class="history-input">@Everest = height of Everest</div>
+          <div class="history-output">29035 feet</div>
+        </div>
+        -->
+      </div>
+
+      <div id="input-container">
+        <span id="input-prompt">&gt;</span>
+        <input type="text" id="expression-input" autofocus autocomplete="off" />
+        <!-- Removed placeholder and calculate button -->
+      </div>
+    </div>
+
+    <script src="js/lib/fcal.min.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/theme-loader.js"></script>
+    <script src="js/utils/messaging.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/variables.js"></script>
+    <script src="js/units.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/popup.js"></script>
+  </body>
+</html>

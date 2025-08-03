@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(xcopy:*)",
+      "Bash(copy manifest.json \"..\\cloudy-calc-distribution\"\")",
+      "Bash(copy popup.html \"..\\cloudy-calc-distribution\"\")",
+      "Bash(copy calc.html \"..\\cloudy-calc-distribution\"\")",
+      "Bash(copy options.html \"..\\cloudy-calc-distribution\"\")",
+      "Bash(cp:*)",
+      "Bash(find:*)"
+    ],
+    "deny": []
+  }
+}
