@@ -251,6 +251,9 @@ document.addEventListener("DOMContentLoaded", () => {
           if (typeof self.clearHistory === "function") {
             await self.clearHistory(); // Clear stored history
           }
+          if (typeof self.clearAllVariables === "function") {
+            await self.clearAllVariables(); // Clear all variables including 'ans'
+          }
           expressionInput.value = "";
           expressionInput.focus();
           return;
@@ -288,6 +291,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof self.clearHistory === "function") {
         await self.clearHistory(); // Clear stored history
       }
+      if (typeof self.clearAllVariables === "function") {
+        await self.clearAllVariables(); // Clear all variables including 'ans'
+      }
       if (expressionInput) {
         expressionInput.value = "";
         expressionInput.focus();
@@ -317,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
         url: chrome.runtime.getURL("calc.html"),
         type: "popup",
         width: 400,
-        height: 600,
+        height: 440, // Adjusted to match the body height (400px) plus window chrome
       });
     });
   }
